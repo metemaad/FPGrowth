@@ -9,14 +9,14 @@ public class main {
     {
         FileHandler fileHandler=new FileHandler();
         //fileHandler.setFilename("/src/preprocessed_connect-4");
-        fileHandler.setFilename("/src/test");
+        fileHandler.setFilename("/src/simpledata");
         fileHandler.loadData();
         Vector<Vector<item>> alltuples = fileHandler.getDataset();
 
 
         FPGrowth fpGrowth=new FPGrowth();
         fpGrowth.setAlltuples(alltuples);
-        fpGrowth.setMinuimumSupport(30);
+        fpGrowth.setMinuimumSupport(70);
         fpGrowth.process();
 
 

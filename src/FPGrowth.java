@@ -43,10 +43,51 @@ public class FPGrowth {
         updateCounts();
         FrequentoneItemSetList();
         Collections.sort(FrequentoneItemSets);
-        ordertuplesbasedonSortedFreqItems(alltuples,FrequentoneItemSets);
+        Vector<Vector<item>> newtuples = ordertuplesbasedonSortedFreqItems(alltuples, FrequentoneItemSets);
+        FPTree fpTree= new FPTree();
+        fpTree.IsRoot=true;
+        for (Vector<item> tp:newtuples ) {
+            fpTree=AddTupletoTree(tp,fpTree);
+        }
+
         int i=0;
     }
 
+    FPTree AddTupletoTree(Vector<item> tuple,FPTree fpTree)
+
+    {
+        FPTree pointer=fpTree;
+        FPTree pointer2=fpTree;
+        for (item i:tuple) {
+            pointer2=pointer;
+            for (FPTree ch:pointer.child)
+            {
+                if (ch.item.equals(i.toString()))
+                {
+                    pointer=ch;
+                    break;
+
+                }
+
+            }
+            if(pointer==pointer2)
+            {
+                FPTree newbranch=new FPTree();
+                newbranch.parent=pointer;
+                newbranch.item=i.toString();
+                newbranch.cardinality=i.getCardinality();
+                pointer.child.add(newbranch);
+                pointer=newbranch;
+              //  break;
+
+            }
+
+
+
+        }
+        return fpTree;
+
+    }
     Vector<item> sortBasedonVector(Vector<item> tuple,Vector<ItemSet> order)
     {
         Vector<item> tmp=new Vector<>();
@@ -56,7 +97,7 @@ public class FPGrowth {
                 if (tupleitm.toString().equals(tmpI.item))
                 {
 
-                    tupleitm.setValue(tmpI.Cardinality);
+                    tupleitm.setCardinality(tmpI.Cardinality);
                     tmp.add(0,tupleitm);
                     break;
                 }

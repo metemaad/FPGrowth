@@ -17,8 +17,9 @@ public class ItemSet implements Comparable<ItemSet> {
 
     }
 
+    FPTree threadpointer=null;
     @Override
     public String toString() {
-        return item;
+        return item+":"+Cardinality;
     }
 }
