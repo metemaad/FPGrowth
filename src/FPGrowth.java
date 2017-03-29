@@ -43,8 +43,40 @@ public class FPGrowth {
         updateCounts();
         FrequentoneItemSetList();
         Collections.sort(FrequentoneItemSets);
+        ordertuplesbasedonSortedFreqItems(alltuples,FrequentoneItemSets);
         int i=0;
     }
+
+    Vector<item> sortBasedonVector(Vector<item> tuple,Vector<ItemSet> order)
+    {
+        Vector<item> tmp=new Vector<>();
+        for (ItemSet tmpI:order) {
+
+            for (item tupleitm:tuple) {
+                if (tupleitm.toString().equals(tmpI.item))
+                {
+
+                    tupleitm.setValue(tmpI.Cardinality);
+                    tmp.add(0,tupleitm);
+                    break;
+                }
+
+            }
+
+        }
+        return tmp;
+
+    }
+    private Vector<Vector<item>> ordertuplesbasedonSortedFreqItems(Vector<Vector<item>> alltuples,Vector<ItemSet> FreqOneItemsets)
+    {
+        Vector<Vector<item>> ret=new Vector<>();
+        for (Vector<item> vi:alltuples ) {
+            ret.add(sortBasedonVector(vi,FreqOneItemsets));
+
+        }
+        return ret;
+    }
+
     Vector<ItemSet> FrequentoneItemSets = new Vector<>();
     Map < String, Integer > dictionary = new HashMap < > ();
     Vector<ItemSet> RemovedoneItemSets= new Vector<>();

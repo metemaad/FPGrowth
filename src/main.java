@@ -8,8 +8,8 @@ public class main {
     public static void main(String[] args)
     {
         FileHandler fileHandler=new FileHandler();
-        fileHandler.setFilename("/src/preprocessed_connect-4");
-        //fileHandler.setFilename("/src/test");
+        //fileHandler.setFilename("/src/preprocessed_connect-4");
+        fileHandler.setFilename("/src/test");
         fileHandler.loadData();
         Vector<Vector<item>> alltuples = fileHandler.getDataset();
 

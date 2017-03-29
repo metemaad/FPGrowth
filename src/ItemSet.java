@@ -16,4 +16,9 @@ public class ItemSet implements Comparable<ItemSet> {
             return this.Cardinality < o.Cardinality ? -1 : 0;
 
     }
+
+    @Override
+    public String toString() {
+        return item;
+    }
 }
