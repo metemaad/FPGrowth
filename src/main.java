@@ -1,3 +1,4 @@
+import java.io.FileNotFoundException;
 import java.util.Vector;
 
 /**
@@ -5,13 +6,14 @@ import java.util.Vector;
  */
 public class main {
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws FileNotFoundException {
         FileHandler fileHandler=new FileHandler();
         //fileHandler.setFilename("/src/preprocessed_connect-4");
+
+
         fileHandler.setFilename("/src/simpledata");
         fileHandler.loadData();
-        Vector<Vector<item>> alltuples = fileHandler.getDataset();
+        Vector<Vector<String>> alltuples = fileHandler.getDataset();
 
 
         FPGrowth fpGrowth=new FPGrowth();

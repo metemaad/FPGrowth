@@ -44,16 +44,26 @@ public class FPTree implements Comparable<FPTree>{
      * stores the number of that this item occures
      */
     int cardinality;
+
     /**
      * shows a threat to the other similar items
      */
     FPTree thread=null;
+
+    int threadcardinality(){ return thread!=null?this.cardinality+thread.cardinality:this.cardinality;}
+
+    @Override
+    public String toString() {
+        return "["+item+":"+threadcardinality()+"]";
+    }
 
     /**
      * compare fpTree with this node based on their cardinality
      * @param fpTree
      * @return returns 1 if this.cardinality> input. cardinality
      */
+
+
     @Override
     public int compareTo(FPTree fpTree) {
         if (this.cardinality>fpTree.cardinality)
