@@ -10,6 +10,7 @@ public class FPTree implements Comparable<FPTree>{
      * If this node is the root or not
      */
     boolean IsRoot=false;
+    FPTree next=null;
 
     Map<String, Integer> getHeadTable()
     {
@@ -86,6 +87,7 @@ public class FPTree implements Comparable<FPTree>{
      * @return returns 1 if this.cardinality> input. cardinality
      */
 
+    boolean Isstart=false;
 
     @Override
     public int compareTo(FPTree fpTree) {
@@ -96,5 +98,6 @@ public class FPTree implements Comparable<FPTree>{
         else
             return this.cardinality < fpTree.cardinality ? -1 : 0;
     }
+
 }
 
