@@ -1,4 +1,4 @@
-import java.util.Vector;
+import java.util.*;
 
 /**
  * This class store a node of FPTree
@@ -10,6 +10,29 @@ public class FPTree implements Comparable<FPTree>{
      * If this node is the root or not
      */
     boolean IsRoot=false;
+
+    Map<String, Integer> getHeadTable()
+    {
+        Map<String, Integer> ret = new HashMap<>();
+
+        ret.put(this.item,this.cardinality);
+        for (FPTree ch : this.child) {
+
+            ret.putAll(ch.getHeadTable());
+        }
+        return ret;
+    }
+    Set<String> getChild()
+    {
+        Set<String > ret=new HashSet<>();
+        for (FPTree ch:this.child)
+        {
+            ret.add(ch.item);
+            ret.addAll(ch.getChild());
+
+        }
+        return ret;
+    }
     /**
      * child of this node
      */
