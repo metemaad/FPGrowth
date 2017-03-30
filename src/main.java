@@ -21,6 +21,7 @@ public class main {
 
         FPTree fptree=fpGrowth.FPTreeConstruction(3);
         Vector<Vector<String>> freq = fpGrowth.FPgrowthFreqPatterns(fptree,3);
+        System.out.println("Freq pats: "+freq);
 
 
     }

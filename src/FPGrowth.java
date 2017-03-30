@@ -106,11 +106,11 @@ public class FPGrowth {
                 Vector < HeaderTableItem > ht=CollectFrequentItems(dic,MinuimumSupportTreshhold);
                 Collections.sort(ht);
 
-                Vector < Vector < String >> SortedTuples = ordertuplesbasedonSortedFreqItemsR(newdataset, ht);
+                Vector < Vector < CondDS>> SortedTuples = ordertuplesbasedonSortedFreqItemsRCond(newdataset, ht);
                 System.out.println( B+"Conditional Pattern Base HT:" +ht);
                 //update MinuimumSupportTreshhold
                 //**********************************
-                FPTree Tree_B = ConstructBCondPatternBaseAndCondFPTree(SortedTuples ,ht);
+                FPTree Tree_B = ConstructBCondPatternBaseAndCondFPTreeCond(SortedTuples ,ht);
                 Vector<String> tmp=new Vector<>();
                 for (HeaderTableItem inb:ht) {
                     tmp.add(inb.item);
@@ -122,9 +122,10 @@ public class FPGrowth {
                 if (Tree_B.child.size() > 0) // Tree_BisNotEmpty())
                 {
 
-                    System.out.println("Treeb "+B);
+                    System.out.println("Treeb "+B+"|" +Tree_B);
 
                     Vector < Vector < String >> FreqPatternB = FPgrowth(Tree_B, B,MinuimumSupportTreshhold);
+                    System.out.println( "Freq: " +FreqPatternB);
                     freq_patQ.addAll(FreqPatternB);
 
                 }
@@ -161,6 +162,22 @@ public class FPGrowth {
         for (Vector < String > FreqItemOfT: SortedTuples) {
 
             fpTree = insertFreqItemsOfT(FreqItemOfT, fpTree,ht);
+        }
+
+
+        return root;
+    }
+
+    FPTree ConstructBCondPatternBaseAndCondFPTreeCond(Vector<Vector<CondDS>> SortedTuples, Vector<HeaderTableItem> ht) {
+
+        FPTree fpTree = new FPTree();
+        FPTree root = fpTree;
+        fpTree.IsRoot = true;
+        fpTree.item = "Null";
+        //for each transaction T of DB
+        for (Vector < CondDS > FreqItemOfT: SortedTuples) {
+
+            fpTree = insertFreqItemsOfTCond(FreqItemOfT, fpTree,ht);
         }
 
 
@@ -354,6 +371,54 @@ public class FPGrowth {
 
     }
 
+    FPTree insertFreqItemsOfTCond(Vector<CondDS> FreqItemOfT, FPTree fpTree, Vector<HeaderTableItem> ht)
+
+    {
+        FPTree root = fpTree;
+        FPTree rootend;
+
+        FPTree pointer = fpTree;
+        FPTree pointer2 = fpTree;
+        for (CondDS i: FreqItemOfT) {
+            pointer2 = pointer;
+            for (FPTree ch: pointer.child) {
+                if (ch.item.equals(i.item)) {
+                    pointer = ch;
+                    pointer.cardinality += i.cardinality;
+                    rootend = findendpointer(root);
+                    if ((pointer.next == null)&(pointer!=rootend)) {
+                        rootend.next = pointer;
+                    }
+
+                    break;
+
+                }
+
+            }
+            if (pointer == pointer2) {
+
+                boolean f = isintree(i.item, root);
+                FPTree newbranch = new FPTree();
+                newbranch.Isstart = !f;
+                newbranch.parent = pointer;
+                newbranch.item = i.item;
+                FPTree pl = iteminfq1listhaspointer(i.item, root,ht);
+                if (pl == null) {
+                    setfq1pointer(i.item, newbranch,ht);
+                } else {
+                    pl.nodeLink = newbranch;
+                }
+                newbranch.cardinality = i.cardinality;
+                rootend = findendpointer(root);
+                rootend.next = newbranch;
+                newbranch.next = null;
+                pointer.child.add(newbranch);
+                pointer = newbranch;
+            }
+        }
+        return fpTree;
+
+    }
 
     FPTree insertFreqItemsOfT(Vector<String> FreqItemOfT, FPTree fpTree, Vector<HeaderTableItem> ht)
 
@@ -462,6 +527,7 @@ public class FPGrowth {
         Set<Set<String>> d=new HashSet<>();
         for (Vector<CondDS> v:ret ) {
             Set<String> s=new HashSet<>();
+            int i=0;
             for (CondDS c:v) {
                 s.add(c.item);
             }
@@ -480,6 +546,15 @@ public class FPGrowth {
 
         }
         return retd;
+    }
+    private Vector < Vector < CondDS>> ordertuplesbasedonSortedFreqItemsRCond(Vector < Vector < CondDS >> alltuples, Vector < HeaderTableItem > freqOneItemsets) {
+        Vector < Vector < CondDS >> ret = new Vector < > ();
+        for (Vector < CondDS > vi: alltuples) {
+            ret.add(sortBasedonVectorR(vi, freqOneItemsets));
+
+        }
+
+        return ret;
     }
 
     private Vector < Vector < String >> ordertuplesbasedonSortedFreqItems(Vector < Vector < String >> alltuples, Vector < HeaderTableItem > freqOneItemsets) {
