@@ -77,8 +77,15 @@ public class FPTree implements Comparable<FPTree>{
     int threadcardinality(){ return nodeLink !=null?this.cardinality+ nodeLink.cardinality:this.cardinality;}
 
     @Override
-    public String toString() {
-        return "["+item+":"+cardinality+" of "+ threadcardinality()+"]";
+    public String toString()
+    {
+        String s=" [ ";
+        for (FPTree ch:this.child ) {
+            s+=" "+ch.toString();
+
+        }
+        s+=" ] \n";
+        return "["+item+":"+cardinality+" of "+ threadcardinality()+ "|"+s+"]";
     }
 
     /**
