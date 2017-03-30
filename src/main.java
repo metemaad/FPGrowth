@@ -19,7 +19,8 @@ public class main {
         FPGrowth fpGrowth=new FPGrowth();
         fpGrowth.setAlltuples(alltuples);
         fpGrowth.setMinuimumSupport(70);
-        fpGrowth.FPTreeConstruction();
+        FPTree fptree=fpGrowth.FPTreeConstruction();
+        Vector<Vector<String>> freq = fpGrowth.FPgrowthFreqPatterns(fptree);
 
 
     }
