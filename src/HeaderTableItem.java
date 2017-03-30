@@ -17,7 +17,7 @@ public class HeaderTableItem implements Comparable<HeaderTableItem> {
 
     }
 
-    FPTree threadpointer=null;
+    FPTree headofNodeLink =null;
     @Override
     public String toString() {
         return item+":"+Cardinality;

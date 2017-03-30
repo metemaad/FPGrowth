@@ -19,7 +19,7 @@ public class main {
         FPGrowth fpGrowth=new FPGrowth();
         fpGrowth.setAlltuples(alltuples);
         fpGrowth.setMinuimumSupport(70);
-        fpGrowth.process();
+        fpGrowth.FPTreeConstruction();
 
 
     }

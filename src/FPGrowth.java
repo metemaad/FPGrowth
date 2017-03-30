@@ -41,24 +41,236 @@ public class FPGrowth {
 
 
     }
-    void process() {
-        updateCounts();
-        FrequentoneItemSetList();
+    void FPTreeConstruction() {
+        ScanDB();
+        CollectFrequentItems();
         Collections.sort(HeaderTable);
-        Vector<Vector<String>> newtuples = ordertuplesbasedonSortedFreqItems(alltuples, HeaderTable);
+
+        Vector<Vector<String>> SortedTuples = ordertuplesbasedonSortedFreqItems(alltuples, HeaderTable);
+
+        //Create root of Tree
+        FPTree fpTree= new FPTree();
+        fpTree.IsRoot=true;
+        fpTree.item="Null";
+        //for each transaction T of DB
+        for (Vector<String> FreqItemOfT:SortedTuples ) {
+
+            fpTree= insertFreqItemsOfT(FreqItemOfT,fpTree);
+        }
+
+//        minedFreqPat.removeAllElements();
+//        for (HeaderTableItem ht:HeaderTable) {
+//
+//            Vector<String> condition=new Vector<>();
+//            condition.add(ht.item);
+//            minedFreqPat.add(condition);
+//            HeaderTableItem htaaa= findheadertablecell(ht.item,HeaderTable);
+//            Vector<String> netset = generateFreqPat(htaaa,fpTree,condition);
+//        }
+//
+//        int i=0;
+    }
+    void FPgrowthFreqPatterns(Vector<Vector<String>> Db,int minsup,FPTree fpTree)
+    {
+
+        FPGrowth(fpTree,null);
+    }
+
+    Object FPgrowth(FPTree fpTree, Object A)
+    {
+
+        FPTree P = null; //Single prefix path
+        FPTree Q=null;// Multi Path Part
+        if (TreeHasSinglePrefixPath(fpTree)==true)
+        {
+            GeneratePatternsFromCombinationsInPplusA();
+        }
+        else
+            {
+                //e let Q be Tree
+                //For each item Ai in Q
+                Q=fpTree; //there is no Single prefix path
+                for (Object ai:Q){
+                GeneratePatternB();//=Ai+A
+                    FPTree Tree_B=ConstructBCondPatternBaseAndCondFPTree();
+                if (Tree_B.child.size()>=0) // Tree_BisNotEmpty())
+                {
+                    Object B;
+
+                     Object   FreqPatternB = FPgrowth(Tree_B, B);
+                    }
+
+            }
+    }
+        return freqPatternPQPXQ(P,Q);//freq-pattern(P)+freq-pattern(Q)+freq-pattern(P)Xfreq-pattern(Q)
+    }
+
+    Object freqPatternPQPXQ(Object P,Object Q)
+    {
+        return null;
+
+    }
+
+    private FPTree ConstructBCondPatternBaseAndCondFPTree() {
+    }
+
+    private void GeneratePatternsFromCombinationsInPplusA() {
+    }
+
+    boolean TreeHasSinglePrefixPath(FPTree fpTree) {
+
+        //return fpTree.child.size() <= 1 && (fpTree.child.size() != 1 || TreeHasSinglePrefixPath(fpTree.child.get(0)));
+        return false;
+
+    }
+    Vector<String> generateFreqPat(HeaderTableItem ht, FPTree root, Vector<String > condition)
+    {
+        String item=ht.item;
+
+        Vector<Vector<CondDS>> newdataset =new Vector<>();
+        Map<String, Integer> dic=new HashMap<>();
+
+
+        FPTree first=ht.headofNodeLink;
+        Vector<FPTree> list=new Vector<>();
+        while (first!=null)
+        {
+            list.add(first);
+            first=first.nodeLink;
+
+        }
+
+
+
+        for (FPTree l:list )
+        {
+            Vector<CondDS> record=new Vector<>();
+            FPTree p=l;
+            int car=p.cardinality;
+            while((!p.item.equals("Null")))
+            {
+                if ((!p.item.equals(item))) {
+                    CondDS condDS = new CondDS();
+                    condDS.item = p.item;
+                    condDS.cardinality = car;
+                    if (dic.containsKey(p.item)) {
+                        int i = dic.get(p.item);
+                        dic.put(p.item, i + car);
+                    } else {
+                        dic.put(p.item, car);
+                    }
+
+                    record.add(condDS);
+                }
+                p=p.parent;
+
+            }
+            newdataset.add(record);
+
+
+        }
+
+
+        Vector<HeaderTableItem> headerTable= new Vector<>();
+        //removedoneHeaderTableItems.removeAllElements();
+        for (Map.Entry<String, Integer> entry: dic.entrySet()) {
+            HeaderTableItem tmp=new HeaderTableItem();
+            tmp.Cardinality=entry.getValue();
+            tmp.item=entry.getKey();
+            if (entry.getValue()>=MinuimumSupportTreshhold){
+
+                headerTable.add(tmp);
+            }else{
+                //removedoneHeaderTableItems.add(tmp);
+            }
+        }
+
+        if (headerTable.size()<=0)
+        {
+            return condition;
+        }
+
+        //sort dic
+        Collections.sort(headerTable);
+        //remove not freq
+        //generate tree
+
+
+        Vector<Vector<CondDS>> newtuples = ordertuplesbasedonSortedFreqItemsR(newdataset, headerTable);
 
         FPTree fpTree= new FPTree();
         fpTree.IsRoot=true;
         fpTree.item="Null";
-        for (Vector<String> tp:newtuples ) {
+        for (Vector<CondDS> tp:newtuples ) {
 
-            fpTree=AddTupletoTree(tp,fpTree);
+            fpTree=AddTupletoTreeR(tp,fpTree);
         }
 
-        int i=0;
+
+
+
+        for (HeaderTableItem htaa:headerTable) {
+            Vector<String> condition1=new Vector<>();
+            condition1.addAll(condition);
+            condition1.add(htaa.item);
+            minedFreqPat.add(condition1);
+            HeaderTableItem htaaa= findheadertablecell(htaa.item,headerTable);
+            Vector<String> netset = generateFreqPat(htaaa,fpTree,condition1);
+
+        }
+
+        return condition;
+
+    }
+Vector<Vector<String>> minedFreqPat=new Vector<>();
+
+    FPTree iteminfq1listhaspointerR(String item,FPTree fpTree,Vector<HeaderTableItem> headerTable)
+    {
+        FPTree p=null;
+        FPTree ret=null;
+        HeaderTableItem htt=null;
+        for (HeaderTableItem ht:headerTable) {
+            if (ht.item.equals(item))
+            {
+                htt= ht;
+                break;
+            }
+
+        }
+        if (htt.headofNodeLink ==null)
+        {
+            return null;
+        }else
+        {
+            ret=htt.headofNodeLink;
+            p=ret;
+            while (p.nodeLink !=null)
+            {
+
+                p=p.nodeLink;
+                ret=p;
+
+            }
+            return ret;
+        }
+
     }
 
 
+    HeaderTableItem findheadertablecell(String item,Vector<HeaderTableItem> headerTable)
+    {
+        HeaderTableItem htt=null;
+        for (HeaderTableItem ht:headerTable) {
+            if (ht.item.equals(item))
+            {
+                htt= ht;
+                break;
+            }
+
+        }
+        return htt;
+
+    }
     FPTree iteminfq1listhaspointer(String item,FPTree fpTree)
     {
         FPTree p=null;
@@ -72,17 +284,17 @@ public class FPGrowth {
             }
 
         }
-        if (htt.threadpointer==null)
+        if (htt.headofNodeLink ==null)
         {
             return null;
         }else
         {
-            ret=htt.threadpointer;
+            ret=htt.headofNodeLink;
             p=ret;
-            while (p.thread!=null)
+            while (p.nodeLink !=null)
             {
 
-                p=p.thread;
+                p=p.nodeLink;
                 ret=p;
 
             }
@@ -90,15 +302,62 @@ public class FPGrowth {
         }
 
     }
-
-
-    FPTree AddTupletoTree(Vector<String> tuple,FPTree fpTree)
+    FPTree AddTupletoTreeR(Vector<CondDS> tuple,FPTree fpTree)
 
     {
         FPTree root=fpTree;
         FPTree pointer=fpTree;
         FPTree pointer2=fpTree;
-        for (String i:tuple) {
+        for (CondDS i:tuple) {
+            pointer2=pointer;
+            for (FPTree ch:pointer.child)
+            {
+                if (ch.item.equals(i.item))
+                {
+                    pointer=ch;
+                    pointer.cardinality+=1;
+                    break;
+
+                }
+
+            }
+            if(pointer==pointer2)
+            {
+
+                FPTree newbranch=new FPTree();
+                newbranch.parent=pointer;
+                newbranch.item=i.item;
+                FPTree pl=iteminfq1listhaspointer(i.item,root);
+                if (pl==null)
+                {
+                    setfq1pointer(i.item,newbranch);
+                }
+                else
+                {
+                    pl.nodeLink =newbranch;
+                }
+                newbranch.cardinality=1;
+                pointer.child.add(newbranch);
+                pointer=newbranch;
+                //  break;
+
+            }
+
+
+
+        }
+        return fpTree;
+
+    }
+
+
+    FPTree insertFreqItemsOfT(Vector<String> FreqItemOfT, FPTree fpTree)
+
+    {
+        FPTree root=fpTree;
+        FPTree pointer=fpTree;
+        FPTree pointer2=fpTree;
+        for (String i:FreqItemOfT) {
             pointer2=pointer;
             for (FPTree ch:pointer.child)
             {
@@ -124,7 +383,7 @@ public class FPGrowth {
                 }
                 else
                     {
-                        pl.thread=newbranch;
+                        pl.nodeLink =newbranch;
                     }
                 newbranch.cardinality=1;
                 pointer.child.add(newbranch);
@@ -144,14 +403,33 @@ public class FPGrowth {
         for (HeaderTableItem f: HeaderTable) {
             if (f.item.equals(s))
             {
-                f.threadpointer=newbranch;
+                f.headofNodeLink =newbranch;
                 break;
 
             }
 
         }
     }
+    Vector<CondDS> sortBasedonVectorR(Vector<CondDS> tuple, Vector<HeaderTableItem> order)
+    {
+        Vector<CondDS> tmp=new Vector<>();
+        for (HeaderTableItem tmpI:order) {
 
+            for (CondDS tupleitm:tuple) {
+                if (tupleitm.item.toString().equals(tmpI.item))
+                {
+
+                    //tupleitm.setCardinality(tmpI.Cardinality);
+                    tmp.add(0,tupleitm);
+                    break;
+                }
+
+            }
+
+        }
+        return tmp;
+
+    }
     Vector<String> sortBasedonVector(Vector<String> tuple,Vector<HeaderTableItem> order)
     {
         Vector<String> tmp=new Vector<>();
@@ -172,6 +450,15 @@ public class FPGrowth {
         return tmp;
 
     }
+    private Vector<Vector<CondDS>> ordertuplesbasedonSortedFreqItemsR(Vector<Vector<CondDS>> alltuples, Vector<HeaderTableItem> freqOneItemsets)
+    {
+        Vector<Vector<CondDS>> ret=new Vector<>();
+        for (Vector<CondDS> vi:alltuples ) {
+            ret.add(sortBasedonVectorR(vi, freqOneItemsets));
+
+        }
+        return ret;
+    }
     private Vector<Vector<String>> ordertuplesbasedonSortedFreqItems(Vector<Vector<String>> alltuples,Vector<HeaderTableItem> freqOneItemsets)
     {
         Vector<Vector<String>> ret=new Vector<>();
@@ -187,7 +474,7 @@ public class FPGrowth {
     Vector<HeaderTableItem> removedoneHeaderTableItems = new Vector<>();
 
 
-    void FrequentoneItemSetList() {
+    void CollectFrequentItems() {
         HeaderTable.removeAllElements();
         removedoneHeaderTableItems.removeAllElements();
         for (Map.Entry<String, Integer> entry: dictionary.entrySet()) {
@@ -204,7 +491,7 @@ public class FPGrowth {
     }
 
 
-    void updateCounts() {
+    void ScanDB() {
 
         for (Vector < String > vitem: alltuples) {
             for (String it: vitem) {
@@ -221,3 +508,6 @@ public class FPGrowth {
 
     }
 }
+
+    private void GeneratePatternB() {
+    }

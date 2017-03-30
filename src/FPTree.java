@@ -48,13 +48,13 @@ public class FPTree implements Comparable<FPTree>{
     /**
      * shows a threat to the other similar items
      */
-    FPTree thread=null;
+    FPTree nodeLink =null;
 
-    int threadcardinality(){ return thread!=null?this.cardinality+thread.cardinality:this.cardinality;}
+    int threadcardinality(){ return nodeLink !=null?this.cardinality+ nodeLink.cardinality:this.cardinality;}
 
     @Override
     public String toString() {
-        return "["+item+":"+threadcardinality()+"]";
+        return "["+item+":"+cardinality+" of "+ threadcardinality()+"]";
     }
 
     /**
