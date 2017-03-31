@@ -18,25 +18,31 @@ public class FPGrowth {
 
     FPTree FPTreeConstruction(int MinuimumSupportTreshhold)
     {
+        System.out.println("scandb");
         Map<String, Integer> dic = ScanDB(alltuples);
+        System.out.println("collect freq");
         Vector < HeaderTableItem > Ht=CollectFrequentItems(dic,MinuimumSupportTreshhold);
+        System.out.println("sort");
         Collections.sort(Ht);
 
         System.out.print("ht:"+Ht+"\n");
         Vector < Vector < String >> SortedTuples = ordertuplesbasedonSortedFreqItems(alltuples, Ht);
 
+        System.out.println("start tree");
         //Create root of Tree
         FPTree fpTree = new FPTree();
         fpTree.IsRoot = true;
         fpTree.item = "Null";
         //for each transaction T of DB
-        for (Vector < String > FreqItemOfT: SortedTuples) {
+        for (int i = 0, sortedTuplesSize = SortedTuples.size(); i < sortedTuplesSize; i++) {
+            Vector<String> FreqItemOfT = SortedTuples.get(i);
 
-            printrecord(FreqItemOfT);
+            if(i%1000==0) System.out.println((i*100)/sortedTuplesSize);
+
             fpTree = insertFreqItemsOfT(FreqItemOfT, fpTree, Ht);
         }
 
-        //System.out.print(fpTree);
+       System.out.println("done.");
         return fpTree;
 
 
@@ -62,22 +68,24 @@ public class FPGrowth {
 
         if (fpTree.child.size()==0){return null;}
 
-        System.out.println("Mining : "+fpTree+" on "+A);
+        System.out.println("Mining :  on "+A);
 
         FPTree P = null; //Single prefix path
         FPTree Q = null; // Multi Path Part
         Set < Vector < String >> freq_patQ = new HashSet<>();
         Set < Vector < String >> freq_patP = new HashSet<>();
 
-        if (TreeHasSinglePrefixPath(fpTree) == true) {
+        if (TreeHasSinglePrefixPath(fpTree) == true)
+        {
             GeneratePatternsFromCombinationsInPplusA();
-        } else {
+        }
+        else {
             //e let Q be Tree
             //For each item Ai in Q
             Q = fpTree; //there is no Single prefix path
 
             Vector < HeaderTableItem > Ht = getHeadTable(Q,MinuimumSupportTreshhold);
-            System.out.println("HT : "+Ht+" on "+A);
+ //           System.out.println("HT : "+Ht+" on "+A);
 
 
 
@@ -89,15 +97,15 @@ public class FPGrowth {
                 B.add(Ai.item);
 
                 if (A != null) B.addAll(A);
-                System.out.println("Mining : B=ai+A :"+B);
+   //             System.out.println("Mining : B=ai+A :"+B);
                 //b=ai+A **********************************
                 //support ai
                 MinuimumSupportTreshhold=Ai.Cardinality;
-                System.out.println("Mining : Support Ai :"+Ai.Cardinality);
+    //            System.out.println("Mining : Support Ai :"+Ai.Cardinality);
 
                 Vector < Vector < CondDS >> newdataset = ConstructBCondPatBase(Ai, B, Ht);
-                System.out.println( B+"Conditional Pattern Base :" );
-                Printdataset(newdataset);
+     //           System.out.println( B+"Conditional Pattern Base :" );
+     //           Printdataset(newdataset);
                 //get the header of newdataset
                 //sort the newdataset
 
@@ -107,7 +115,7 @@ public class FPGrowth {
                 Collections.sort(ht);
 
                 Vector < Vector < CondDS>> SortedTuples = ordertuplesbasedonSortedFreqItemsRCond(newdataset, ht);
-                System.out.println( B+"Conditional Pattern Base HT:" +ht);
+     //           System.out.println( B+"Conditional Pattern Base HT:" +ht);
                 //update MinuimumSupportTreshhold
                 //**********************************
                 FPTree Tree_B = ConstructBCondPatternBaseAndCondFPTreeCond(SortedTuples ,ht);
@@ -122,7 +130,7 @@ public class FPGrowth {
                 if (Tree_B.child.size() > 0) // Tree_BisNotEmpty())
                 {
 
-                    System.out.println("Treeb "+B+"|" +Tree_B);
+      //              System.out.println("Treeb "+B+"|" +Tree_B);
 
                     Set < Vector < String >> FreqPatternB = FPgrowth(Tree_B, B,MinuimumSupportTreshhold);
                     System.out.println( "Freq: " +FreqPatternB);
@@ -312,9 +320,22 @@ public class FPGrowth {
     private void GeneratePatternsFromCombinationsInPplusA() {}
 
     boolean TreeHasSinglePrefixPath(FPTree fpTree) {
+        boolean ret=true;
+        while (fpTree.child.size()>0)
+        {
+            if (fpTree.child.size()==1){
+            fpTree=fpTree.child.get(0);
+            }
+            else
+                {
+                    ret=false;
+                    break;
+
+                }
+        }
 
         //return fpTree.child.size() <= 1 && (fpTree.child.size() != 1 || TreeHasSinglePrefixPath(fpTree.child.get(0)));
-        return false;
+        return fpTree.IsRoot ? false : ret;
 
     }
 
@@ -345,7 +366,7 @@ public class FPGrowth {
         return false;
     }
 
-    FPTree iteminfq1listhaspointer(String item, FPTree fpTree, Vector < HeaderTableItem > HeaderTable) {
+    FPTree iteminfq1listhaspointer(String item, Vector<HeaderTableItem> HeaderTable) {
         FPTree p = null;
         FPTree ret = null;
         HeaderTableItem htt = null;
@@ -374,11 +395,14 @@ public class FPGrowth {
 
 
     FPTree findendpointer(FPTree root) {
+
         if (root.next == null) return root;
         while (root.next != null) {
             root = root.next;
         }
-        return root;
+            return root;
+
+
 
     }
 
@@ -413,7 +437,7 @@ public class FPGrowth {
                 newbranch.Isstart = !f;
                 newbranch.parent = pointer;
                 newbranch.item = i.item;
-                FPTree pl = iteminfq1listhaspointer(i.item, root,ht);
+                FPTree pl = iteminfq1listhaspointer(i.item, ht);
                 if (pl == null) {
                     setfq1pointer(i.item, newbranch,ht);
                 } else {
@@ -442,7 +466,7 @@ public class FPGrowth {
         for (String i: FreqItemOfT) {
             pointer2 = pointer;
             for (FPTree ch: pointer.child) {
-                if (ch.item.equals(i.toString())) {
+                if (ch.item.equals(i)) {
                     pointer = ch;
                     pointer.cardinality += 1;
                     rootend = findendpointer(root);
@@ -462,7 +486,7 @@ public class FPGrowth {
                 newbranch.Isstart = !f;
                 newbranch.parent = pointer;
                 newbranch.item = i.toString();
-                FPTree pl = iteminfq1listhaspointer(i.toString(), root,ht);
+                FPTree pl = iteminfq1listhaspointer(i.toString(), ht);
                 if (pl == null) {
                     setfq1pointer(i.toString(), newbranch,ht);
                 } else {
@@ -586,14 +610,12 @@ public class FPGrowth {
         Vector < HeaderTableItem > HeaderTable = new Vector < > ();
         HeaderTable.removeAllElements();
 
-        for (Map.Entry < String, Integer > entry: dictionary.entrySet()) {
+        for (Map.Entry < String, Integer > entry: dictionary.entrySet())
+        {
             HeaderTableItem tmp = new HeaderTableItem();
             tmp.Cardinality = entry.getValue();
             tmp.item = entry.getKey();
-            if (entry.getValue() >= MinuimumSupportTreshhold) {
-
-                HeaderTable.add(tmp);
-            }
+            if (entry.getValue() >= MinuimumSupportTreshhold) HeaderTable.add(tmp);
         }
         return HeaderTable;
     }

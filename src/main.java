@@ -12,17 +12,17 @@ public class main {
         //fileHandler.setFilename("/src/preprocessed_connect-4");
 
 
-        fileHandler.setFilename("/src/test");
+        fileHandler.setFilename("/src/preprocessed_connect-4");
         fileHandler.loadDataBinary();
         Vector<Vector<String>> alltuples = fileHandler.getDataset();
 
 
         FPGrowth fpGrowth=new FPGrowth();
         fpGrowth.setAlltuples(alltuples);
-        int minsup=(alltuples.size()*70)/100;
+        int minsup=(alltuples.size()*1)/100;
 
         FPTree fptree=fpGrowth.FPTreeConstruction(minsup);
-        Set<Vector<String>> freq = fpGrowth.FPgrowthFreqPatterns(fptree,3);
+        Set<Vector<String>> freq = fpGrowth.FPgrowthFreqPatterns(fptree,minsup);
         System.out.println("Freq pats: "+freq);
 
 

@@ -12,28 +12,6 @@ public class FPTree implements Comparable<FPTree>{
     boolean IsRoot=false;
     FPTree next=null;
 
-    Map<String, Integer> getHeadTable()
-    {
-        Map<String, Integer> ret = new HashMap<>();
-
-        ret.put(this.item,this.cardinality);
-        for (FPTree ch : this.child) {
-
-            ret.putAll(ch.getHeadTable());
-        }
-        return ret;
-    }
-    Set<String> getChild()
-    {
-        Set<String > ret=new HashSet<>();
-        for (FPTree ch:this.child)
-        {
-            ret.add(ch.item);
-            ret.addAll(ch.getChild());
-
-        }
-        return ret;
-    }
     /**
      * child of this node
      */
@@ -48,23 +26,6 @@ public class FPTree implements Comparable<FPTree>{
     String item;
 
     /**
-     *
-     * @return returns the item value
-     */
-    public String getItem() {
-        return item;
-    }
-
-    /**
-     * set the item value
-     * @param item
-     */
-    public void setItem(String item) {
-
-        this.item = item;
-    }
-
-    /**
      * stores the number of that this item occures
      */
     int cardinality;
@@ -74,18 +35,18 @@ public class FPTree implements Comparable<FPTree>{
      */
     FPTree nodeLink =null;
 
-    int threadcardinality(){ return nodeLink !=null?this.cardinality+ nodeLink.cardinality:this.cardinality;}
+//    int threadcardinality(){ return nodeLink !=null?this.cardinality+ nodeLink.cardinality:this.cardinality;}
 
     @Override
     public String toString()
     {
-        String s=" [ ";
-        for (FPTree ch:this.child ) {
-            s+=" "+ch.toString();
-
-        }
-        s+=" ] \n";
-        return "["+item+":"+cardinality+" of "+ threadcardinality()+ "|"+s+"]";
+//        String s=" [ ";
+//        for (FPTree ch:this.child ) {
+//            s+=" "+ch.toString();
+//
+//        }
+//        s+=" ] \n";
+        return "["+item+":"+cardinality+"]";//+" of "+ threadcardinality()+ "|"+"]";
     }
 
     /**
