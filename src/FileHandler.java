@@ -43,6 +43,11 @@ public class FileHandler {
         loadDataSet(_filename);
     }
 
+    public void loadDataBinary()
+    {
+        loadDataSetBinary(_filename);
+    }
+
     /**
      * this function returns all the attributes in the dataset.
      * @return list of all attributes or you can say the columns names.
@@ -123,6 +128,33 @@ public class FileHandler {
                     //item instance = new item(attributes.get(j).AttributeName, values.get(j));
                     //if (values.get(j).equals("1"))
                         record.add(values.get(j));
+                }
+                all_Tuples.add(record);
+            }
+        }
+        return all_Tuples;
+    }
+
+    static Vector < Vector < String >> loadDataSetBinary(String dbFileName) {
+        List < String > lines = new ArrayList < > ();
+        dbFileName = getFilePath(dbFileName);
+        Path path = Paths.get(dbFileName);
+        try {
+            lines = Files.readAllLines(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        attributes = GetItemsinoneLine(lines.get(0));
+
+        for (int i = 1; i < lines.size(); i++) {
+            if (!lines.get(i).isEmpty()) {
+                Vector < String > values = GetItemsValuesinoneLine(lines.get(i));
+                Vector < String > record = new Vector < > ();
+                for (int j = 0; j < values.size(); j++) {
+                    //attributes.get(j).addClass(values.get(j));
+                    //item instance = new item(attributes.get(j).AttributeName, values.get(j));
+                    if (values.get(j).equals("1"))
+                    record.add(attributes.get(j).AttributeName);
                 }
                 all_Tuples.add(record);
             }
