@@ -1,4 +1,5 @@
 import java.io.FileNotFoundException;
+import java.util.Set;
 import java.util.Vector;
 
 /**
@@ -20,7 +21,7 @@ public class main {
         fpGrowth.setAlltuples(alltuples);
 
         FPTree fptree=fpGrowth.FPTreeConstruction(3);
-        Vector<Vector<String>> freq = fpGrowth.FPgrowthFreqPatterns(fptree,3);
+        Set<Vector<String>> freq = fpGrowth.FPgrowthFreqPatterns(fptree,3);
         System.out.println("Freq pats: "+freq);
 
 

@@ -52,12 +52,12 @@ public class FPGrowth {
         System.out.print("\n");
     }
 
-    Vector < Vector < String >> FPgrowthFreqPatterns(FPTree fpTree,int MinuimumSupportTreshhold) {
+    Set < Vector < String >> FPgrowthFreqPatterns(FPTree fpTree,int MinuimumSupportTreshhold) {
 
         return FPgrowth(fpTree, null,MinuimumSupportTreshhold);
     }
 
-    Vector < Vector < String >> FPgrowth(FPTree fpTree, Vector < String > A, int MinuimumSupportTreshhold) {
+    Set < Vector < String >> FPgrowth(FPTree fpTree, Vector < String > A, int MinuimumSupportTreshhold) {
 
 
         if (fpTree.child.size()==0){return null;}
@@ -66,8 +66,8 @@ public class FPGrowth {
 
         FPTree P = null; //Single prefix path
         FPTree Q = null; // Multi Path Part
-        Vector < Vector < String >> freq_patQ = new Vector < > ();
-        Vector < Vector < String >> freq_patP = new Vector < > ();
+        Set < Vector < String >> freq_patQ = new HashSet<>();
+        Set < Vector < String >> freq_patP = new HashSet<>();
 
         if (TreeHasSinglePrefixPath(fpTree) == true) {
             GeneratePatternsFromCombinationsInPplusA();
@@ -124,7 +124,7 @@ public class FPGrowth {
 
                     System.out.println("Treeb "+B+"|" +Tree_B);
 
-                    Vector < Vector < String >> FreqPatternB = FPgrowth(Tree_B, B,MinuimumSupportTreshhold);
+                    Set < Vector < String >> FreqPatternB = FPgrowth(Tree_B, B,MinuimumSupportTreshhold);
                     System.out.println( "Freq: " +FreqPatternB);
                     freq_patQ.addAll(FreqPatternB);
 
@@ -204,6 +204,16 @@ public class FPGrowth {
             fpTree = fpTree.next;
         }
 
+        //last node
+        if (dic.containsKey(fpTree.item)) {
+            int i = dic.get(fpTree.item);
+            dic.put(fpTree.item, i + fpTree.cardinality);
+
+        } else {
+            if (!fpTree.IsRoot)
+                dic.put(fpTree.item, fpTree.cardinality);
+        }
+
 
         for (Map.Entry < String, Integer > entry: dic.entrySet()) {
             HeaderTableItem tmp = new HeaderTableItem();
@@ -278,8 +288,8 @@ public class FPGrowth {
         return newdataset;
     }
 
-    Vector < Vector < String >> freqPatternPQPXQ(Vector < Vector < String >> freq_pat_P, Vector < Vector < String >> freq_pat_Q) {
-        Vector < Vector < String >> ret = new Vector < > ();
+    Set < Vector < String >> freqPatternPQPXQ(Set < Vector < String >> freq_pat_P, Set < Vector < String >> freq_pat_Q) {
+        Set < Vector < String >> ret = new HashSet<>();
         ret.addAll(freq_pat_P);
         ret.addAll(freq_pat_Q);
         if (freq_pat_P.size() > 0 & freq_pat_Q.size() > 0) {
