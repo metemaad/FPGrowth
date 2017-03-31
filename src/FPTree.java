@@ -4,7 +4,7 @@ import java.util.*;
  * This class store a node of FPTree
  * Created by mohammad on 3/29/17.
  */
-public class FPTree implements Comparable<FPTree>{
+class FPTree implements Comparable<FPTree>{
 
     /**
      * If this node is the root or not
@@ -15,7 +15,7 @@ public class FPTree implements Comparable<FPTree>{
     /**
      * child of this node
      */
-    Vector<FPTree> child= new Vector<>();
+    final Vector<FPTree> child= new Vector<>();
     /**
      * parent of this node
      */

@@ -5,7 +5,7 @@ import java.util.Vector;
 /**
  * Created by mohammad on 3/29/17.
  */
-public class main {
+class main {
 
     public static void main(String[] args) throws FileNotFoundException {
         FileHandler fileHandler=new FileHandler();
@@ -19,7 +19,7 @@ public class main {
 
         FPGrowth fpGrowth=new FPGrowth();
         fpGrowth.setAlltuples(alltuples);
-        int minsup=(alltuples.size()*1)/100;
+        int minsup=(alltuples.size()*5)/100;
 
         FPTree fptree=fpGrowth.FPTreeConstruction(minsup);
         Set<Vector<String>> freq = fpGrowth.FPgrowthFreqPatterns(fptree,minsup);

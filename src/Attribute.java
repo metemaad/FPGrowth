@@ -1,28 +1,25 @@
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by Mohammad Etemad on 3/9/17.
  */
-public class Attribute {
+class Attribute {
 
     String AttributeName;
     /**
      * this is a set of class names. all of the classes are in an attribute are listed in this set.
      * when we need to access this aggrigated information we just call it without forcing to check the dataset again
      */
-    Set < String > AttributeClasses = new HashSet < > ();
+    private final Set < String > AttributeClasses = new HashSet < > ();
 
     /**
      * we save the number counted for each class in attribute in this dictionary to have an instance access to it when it is necessary.
      */
-    Map < String, Integer > countDictionary = new HashMap < > ();
+    private final Map < String, Integer > countDictionary = new HashMap < > ();
     /**
      * the total number of items has been readed in this attribute. it shows how many items are in this attribute in total inculding all the sub classes.
      */
-    int total = 0;
+    private int total = 0;
 
     /**
      * each time we add a class to our attribute it adds to the number of that type of class. in this way the function calculate the cardinality of each class
@@ -48,9 +45,9 @@ public class Attribute {
      * @param Classname this is the name of a class in an attribute which its cardinality is required.
      * @return the return value is the number counted for the input class which is saved in a dictionary.
      */
-    public int classCount(String Classname) {
+    private int classCount(String Classname) {
 
-        int val = 0;
+        int val;
         if (!countDictionary.containsKey(Classname)) {
             val = 0;
         } else {
@@ -68,8 +65,7 @@ public class Attribute {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this.AttributeName==((Attribute)obj).AttributeName){return true; }else
-        {return false;}
+        return Objects.equals(this.AttributeName, ((Attribute) obj).AttributeName);
 
 
     }

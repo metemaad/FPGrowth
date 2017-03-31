@@ -1,7 +1,7 @@
 /**
  * Created by mohammad on 3/29/17.
  */
-public class HeaderTableItem implements Comparable<HeaderTableItem> {
+class HeaderTableItem implements Comparable<HeaderTableItem> {
     String item;
     int Cardinality;
 

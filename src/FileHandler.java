@@ -11,7 +11,7 @@ import java.util.Vector;
  * this class responsible for reading the file and handling the path of the file. it converts our file to a vector structure.
  * Created by Mohammad Etemad on 3/10/17.
  */
-public class FileHandler {
+class FileHandler {
 
     /**
      * all_Tuples is a structure to save all the dataset.
@@ -19,7 +19,7 @@ public class FileHandler {
      * the record itself is a vector of items
      * and each item has is an attribute and its value
      */
-    private static Vector < Vector < String >> all_Tuples = new Vector < > ();
+    private static final Vector < Vector < String >> all_Tuples = new Vector < > ();
     /**
      * list of all attributes in the dataset.
      */
@@ -84,7 +84,7 @@ public class FileHandler {
      * @param line is a line of dataset.
      * @return is a list of items in the input line.
      */
-    public static Vector < String > GetItemsValuesinoneLine(String line) {
+    private static Vector < String > GetItemsValuesinoneLine(String line) {
         String[] tempLn = line.replaceAll("  +|   +|\t|\r|\n|,", " ").split(" ");
         Vector < String > Res = new Vector < > ();
         Collections.addAll(Res, tempLn);
@@ -96,7 +96,7 @@ public class FileHandler {
      * @param filename the dataset file name.
      * @return full path of the dataset file.
      */
-    public static String getFilePath(String filename) {
+    private static String getFilePath(String filename) {
         String CurrDir = System.getProperty("user.dir");
         return CurrDir + "/" + filename;
     }
@@ -108,7 +108,7 @@ public class FileHandler {
      * @param dbFileName dataset file name.
      * @return data set in vector structure.
      */
-    static Vector < Vector < String >> loadDataSet(String dbFileName) {
+    private static Vector<Vector<String>> loadDataSet(String dbFileName) {
         List < String > lines = new ArrayList < > ();
         dbFileName = getFilePath(dbFileName);
         Path path = Paths.get(dbFileName);
@@ -119,15 +119,15 @@ public class FileHandler {
         }
         //attributes = GetItemsinoneLine(lines.get(0));
 
-        for (int i = 0; i < lines.size(); i++) {
-            if (!lines.get(i).isEmpty()) {
-                Vector < String > values = GetItemsValuesinoneLine(lines.get(i));
-                Vector < String > record = new Vector < > ();
-                for (int j = 0; j < values.size(); j++) {
+        for (String line : lines) {
+            if (!line.isEmpty()) {
+                Vector<String> values = GetItemsValuesinoneLine(line);
+                Vector<String> record = new Vector<>();
+                for (String value : values) {
                     //attributes.get(j).addClass(values.get(j));
                     //item instance = new item(attributes.get(j).AttributeName, values.get(j));
                     //if (values.get(j).equals("1"))
-                        record.add(values.get(j));
+                    record.add(value);
                 }
                 all_Tuples.add(record);
             }
@@ -135,7 +135,7 @@ public class FileHandler {
         return all_Tuples;
     }
 
-    static Vector < Vector < String >> loadDataSetBinary(String dbFileName) {
+    private static Vector<Vector<String>> loadDataSetBinary(String dbFileName) {
         List < String > lines = new ArrayList < > ();
         dbFileName = getFilePath(dbFileName);
         Path path = Paths.get(dbFileName);
