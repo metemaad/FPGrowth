@@ -287,6 +287,7 @@ public class FPGrowth {
 
         return newdataset;
     }
+    
 
     Set < Vector < String >> freqPatternPQPXQ(Set < Vector < String >> freq_pat_P, Set < Vector < String >> freq_pat_Q) {
         Set < Vector < String >> ret = new HashSet<>();
