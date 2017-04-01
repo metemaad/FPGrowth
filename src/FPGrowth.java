@@ -33,11 +33,14 @@ class FPGrowth {
         FPTree fpTree = new FPTree();
         fpTree.IsRoot = true;
         fpTree.item = "Null";
+        fpTree. last=fpTree;
         //for each transaction T of DB
         for (int i = 0, sortedTuplesSize = SortedTuples.size(); i < sortedTuplesSize; i++) {
             Vector<String> FreqItemOfT = SortedTuples.get(i);
 
-            if(i%1000==0) System.out.println((i*100)/sortedTuplesSize);
+            if(i%1000==0)
+                System.out.println((i*100)/sortedTuplesSize);
+           // System.out.println(FreqItemOfT);
 
             fpTree = insertFreqItemsOfT(FreqItemOfT, fpTree, Ht);
         }
@@ -100,7 +103,7 @@ class FPGrowth {
    //             System.out.println("Mining : B=ai+A :"+B);
                 //b=ai+A **********************************
                 //support ai
-                MinuimumSupportTreshhold=Ai.Cardinality;
+//                MinuimumSupportTreshhold=Ai.Cardinality;
     //            System.out.println("Mining : Support Ai :"+Ai.Cardinality);
 
                 Vector < Vector < CondDS >> newdataset = ConstructBCondPatBase(Ai, B, Ht);
@@ -119,21 +122,21 @@ class FPGrowth {
                 //update MinuimumSupportTreshhold
                 //**********************************
                 FPTree Tree_B = ConstructBCondPatternBaseAndCondFPTreeCond(SortedTuples ,ht);
-                Vector<String> tmp=new Vector<>();
-                for (HeaderTableItem inb:ht) {
-                    tmp.add(inb.item);
-                }
-
-                tmp.addAll(B);
-                freq_patQ.add(tmp);
-                System.out.println( "Freq: " +tmp);
+//                Vector<String> tmp=new Vector<>();
+//                for (HeaderTableItem inb:ht) {
+//                    tmp.add(inb.item);
+//                }
+//
+//                tmp.addAll(B);
+//                freq_patQ.add(tmp);
+//                System.out.println( "Freq: " +tmp);
                 if (Tree_B.child.size() > 0) // Tree_BisNotEmpty())
                 {
 
       //              System.out.println("Treeb "+B+"|" +Tree_B);
 
                     Set < Vector < String >> FreqPatternB = FPgrowth(Tree_B, B,MinuimumSupportTreshhold);
-                    System.out.println( "Freq: " +FreqPatternB);
+                    System.out.println( "Freq_b: " +FreqPatternB);
                     assert FreqPatternB != null;
                     freq_patQ.addAll(FreqPatternB);
 
@@ -322,21 +325,21 @@ class FPGrowth {
 
     private boolean TreeHasSinglePrefixPath(FPTree fpTree) {
         boolean ret=true;
-        while (fpTree.child.size()>0)
-        {
-            if (fpTree.child.size()==1){
-            fpTree=fpTree.child.get(0);
-            }
-            else
-                {
-                    ret=false;
-                    break;
-
-                }
-        }
+//        while (fpTree.child.size()>0)
+//        {
+//            if (fpTree.child.size()==1){
+//            fpTree=fpTree.child.get(0);
+//            }
+//            else
+//                {
+//                    ret=false;
+//                    break;
+//
+//                }
+//        }
 
         //return fpTree.child.size() <= 1 && (fpTree.child.size() != 1 || TreeHasSinglePrefixPath(fpTree.child.get(0)));
-        return !fpTree.IsRoot && ret;
+        return false;//!fpTree.IsRoot && ret;
 
     }
 
@@ -461,7 +464,7 @@ class FPGrowth {
 
     {
         FPTree root = fpTree;
-        FPTree rootend;
+        FPTree rootend=fpTree.last;
 
         FPTree pointer = fpTree;
         FPTree pointer2;
@@ -471,9 +474,12 @@ class FPGrowth {
                 if (ch.item.equals(i)) {
                     pointer = ch;
                     pointer.cardinality += 1;
-                    rootend = findendpointer(root);
-                    if (pointer.next == null) {
-                        rootend.next = pointer;
+                    //rootend = findendpointer(root);
+                    if ((pointer.next == null)&(pointer!=rootend))
+                    {
+                        root.last.next = pointer;
+                        root.last = pointer;
+                        pointer.next=null;
                     }
 
                     break;
@@ -495,8 +501,11 @@ class FPGrowth {
                     pl.nodeLink = newbranch;
                 }
                 newbranch.cardinality = 1;
-                rootend = findendpointer(root);
-                rootend.next = newbranch;
+                //rootend = findendpointer(root);
+                root.last.next=newbranch;
+                root.last = newbranch;
+
+
                 newbranch.next = null;
                 pointer.child.add(newbranch);
                 pointer = newbranch;
@@ -609,6 +618,7 @@ class FPGrowth {
 
 
     private Vector<HeaderTableItem> CollectFrequentItems(Map<String, Integer> dictionary, int MinuimumSupportTreshhold) {
+
         Vector < HeaderTableItem > HeaderTable = new Vector < > ();
         HeaderTable.removeAllElements();
 
@@ -623,11 +633,14 @@ class FPGrowth {
     }
 
 
-    private Map<String, Integer> ScanDB(Vector<Vector<String>> alltuples) {
+    private Map<String, Integer> ScanDB(Vector<Vector<String>> alltuples)
+    {
         Map < String, Integer > dictionary = new HashMap < > ();
         for (Vector < String > vitem: alltuples) {
-            for (String it: vitem) {
-                if (dictionary.containsKey(it)) {
+            for (String it: vitem)
+            {
+                if (dictionary.containsKey(it))
+                {
                     int count = dictionary.get(it);
                     dictionary.put(it, count + 1);
                 } else {

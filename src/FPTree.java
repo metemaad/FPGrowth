@@ -11,6 +11,7 @@ class FPTree implements Comparable<FPTree>{
      */
     boolean IsRoot=false;
     FPTree next=null;
+    FPTree last=null;
 
     /**
      * child of this node

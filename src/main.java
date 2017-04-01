@@ -8,6 +8,9 @@ import java.util.Vector;
 class main {
 
     public static void main(String[] args) throws FileNotFoundException {
+        long startTime = System.currentTimeMillis();
+
+
         FileHandler fileHandler=new FileHandler();
         //fileHandler.setFilename("/src/preprocessed_connect-4");
 
@@ -19,12 +22,16 @@ class main {
 
         FPGrowth fpGrowth=new FPGrowth();
         fpGrowth.setAlltuples(alltuples);
-        int minsup=(alltuples.size()*5)/100;
+        int minsup=(alltuples.size()*70)/100;
 
         FPTree fptree=fpGrowth.FPTreeConstruction(minsup);
         Set<Vector<String>> freq = fpGrowth.FPgrowthFreqPatterns(fptree,minsup);
         System.out.println("Freq pats: "+freq);
 
+
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("That took " + (endTime - startTime) + " milliseconds");
 
     }
     }
