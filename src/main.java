@@ -1,3 +1,5 @@
+
+
 import java.io.FileNotFoundException;
 import java.util.Set;
 import java.util.Vector;
@@ -15,18 +17,54 @@ class main {
         //fileHandler.setFilename("/src/preprocessed_connect-4");
 
 
-        fileHandler.setFilename("/src/preprocessed_connect-4");
-        fileHandler.loadDataBinary();
+        fileHandler.setFilename("/src/stest1");
+        fileHandler.loadData();
         Vector<Vector<String>> alltuples = fileHandler.getDataset();
 
 
         FPGrowth fpGrowth=new FPGrowth();
         fpGrowth.setAlltuples(alltuples);
-        int minsup=(alltuples.size()*70)/100;
+        int minsup=2;//(alltuples.size()*95/100);
 
-        FPTree fptree=fpGrowth.FPTreeConstruction(minsup);
-        Set<Vector<String>> freq = fpGrowth.FPgrowthFreqPatterns(fptree,minsup);
-        System.out.println("Freq pats: "+freq);
+        FPTreePack fpTreePack=fpGrowth.FPTreeConstruction(minsup);
+        Set<FrequentPattern> freq = fpGrowth.FPgrowthFreqPatterns(fpTreePack.fpTree,minsup);
+       // System.out.println("Freq pats: "+freq);
+
+
+        System.out.println("Freq # : "+freq.size());
+
+        boolean rep=true;
+        int j=1,k=0;
+        while (rep){
+            rep=false;
+        for (FrequentPattern s:freq )
+        {
+            if (s.pattern.size()==j) {
+                double f=(float)(s.Support)/alltuples.size();
+                System.out.printf( "%d-itemsets: support %.2f for ",j ,f);
+                System.out.print(s.pattern+"\n");
+                rep=true;
+                k++;
+            }
+        }
+            System.out.println(j + " #: " + k);
+        j++;k=0;
+        }
+        System.out.println(alltuples.size());
+//
+//
+//        int minconf=1;
+//        Set<Set<String>> rules = fpGrowth.ruleGeneration(freq,minsup,minconf,fpTreePack);
+//        System.out.println("Rules: "+rules);
+//        System.out.println("Rule # : "+rules.size());
+//        for (Set<String> s:rules ) {
+//            if (s.size()==2)
+//            {
+//                System.out.println(": "+s);
+//
+//            }
+//
+//        }
 
 
         long endTime = System.currentTimeMillis();
@@ -34,4 +72,5 @@ class main {
         System.out.println("That took " + (endTime - startTime) + " milliseconds");
 
     }
+
     }
