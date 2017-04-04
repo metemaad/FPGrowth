@@ -41,13 +41,8 @@ class FPTree implements Comparable<FPTree>{
     @Override
     public String toString()
     {
-//        String s=" [ ";
-//        for (FPTree ch:this.child ) {
-//            s+=" "+ch.toString();
-//
-//        }
-//        s+=" ] \n";
-        return "["+item+":"+cardinality+"]";//+" of "+ threadcardinality()+ "|"+"]";
+
+        return "["+item+":"+cardinality+"]";
     }
 
     /**

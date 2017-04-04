@@ -51,20 +51,7 @@ class main {
         j++;k=0;
         }
         System.out.println(alltuples.size());
-//
-//
-//        int minconf=1;
-//        Set<Set<String>> rules = fpGrowth.ruleGeneration(freq,minsup,minconf,fpTreePack);
-//        System.out.println("Rules: "+rules);
-//        System.out.println("Rule # : "+rules.size());
-//        for (Set<String> s:rules ) {
-//            if (s.size()==2)
-//            {
-//                System.out.println(": "+s);
-//
-//            }
-//
-//        }
+
 
 
         long endTime = System.currentTimeMillis();
