@@ -17,21 +17,21 @@ class main {
         //fileHandler.setFilename("/src/preprocessed_connect-4");
 
 
-        fileHandler.setFilename("/src/stest1");
-        fileHandler.loadData();
+        fileHandler.setFilename("/src/preprocessed_connect-4");
+        fileHandler.loadDataBinary();
         Vector<Vector<String>> alltuples = fileHandler.getDataset();
 
 
         FPGrowth fpGrowth=new FPGrowth();
         fpGrowth.setAlltuples(alltuples);
-        int minsup=2;//(alltuples.size()*95/100);
+        int minsup=(alltuples.size()*80/100);
 
         FPTreePack fpTreePack=fpGrowth.FPTreeConstruction(minsup);
         Set<FrequentPattern> freq = fpGrowth.FPgrowthFreqPatterns(fpTreePack.fpTree,minsup);
        // System.out.println("Freq pats: "+freq);
 
 
-        System.out.println("Freq # : "+freq.size());
+        //System.out.println("Freq # : "+freq.size());
 
         boolean rep=true;
         int j=1,k=0;
@@ -47,10 +47,10 @@ class main {
                 k++;
             }
         }
-            System.out.println(j + " #: " + k);
+         //   System.out.println(j + " #: " + k);
         j++;k=0;
         }
-        System.out.println(alltuples.size());
+       // System.out.println(alltuples.size());
 
 
 

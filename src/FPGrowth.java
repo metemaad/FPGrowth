@@ -102,9 +102,11 @@ class FPGrowth {
                 Map < String, Integer > dic = ScanCondDB(newdataset);
                 Vector < HeaderTableItem > ht = CollectFrequentItems(dic, MinuimumSupportTreshhold);
                 Collections.sort(ht);
-                Vector < Vector < CondDS >> SortedTuples = ordertuplesbasedonSortedFreqItemsRCond(newdataset, ht);
+                Vector < Vector < CondDS >> SortedTuples = SortFreqDS(newdataset, ht);
                 FPTree Tree_B = GenerateBTree(SortedTuples, ht);
-                if (Tree_B.child.size() > 0) {
+                if (Tree_B.child.size() > 0)
+                {
+
                     Set < FrequentPattern > FreqPatternB = FPgrowth(Tree_B, B, MinuimumSupportTreshhold);
                     freq_patQ.addAll(FreqPatternB);
                 }
@@ -591,7 +593,7 @@ class FPGrowth {
 
     }
 
-    private Vector < Vector < CondDS >> ordertuplesbasedonSortedFreqItemsRCond(Vector < Vector < CondDS >> alltuples, Vector < HeaderTableItem > freqOneItemsets) {
+    private Vector < Vector < CondDS >> SortFreqDS(Vector < Vector < CondDS >> alltuples, Vector < HeaderTableItem > freqOneItemsets) {
         Vector < Vector < CondDS >> ret = new Vector < > ();
         for (Vector < CondDS > vi: alltuples) {
             ret.add(sortBasedonVectorR(vi, freqOneItemsets));
